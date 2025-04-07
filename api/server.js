@@ -78,35 +78,41 @@ app.post("/create-checkout-session", async (req, res) => {
 
     const orderRef = await db.collection('orders').add(orderData);
 
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card"],
-      mode: "payment",
-      success_url: `${process.env.FRONTEND_URL || req.headers.origin || 'http://localhost:3000'}/success.html`,
-      cancel_url: `${process.env.FRONTEND_URL || req.headers.origin || 'http://localhost:3000'}/cancel`,
-      line_items: [
-        {
-          price_data: {
-            currency: "bgn",
-            product_data: { 
-              name: motorData.name,
-              description: `Manufacturer: ${motorData.manufacturer}`,
+    try {
+      const session = await stripe.checkout.sessions.create({
+        payment_method_types: ["card"],
+        mode: "payment",
+        success_url: `${process.env.FRONTEND_URL || req.headers.origin || 'http://localhost:3000'}/success.html`,
+        cancel_url: `${process.env.FRONTEND_URL || req.headers.origin || 'http://localhost:3000'}/cancel`,
+        line_items: [
+          {
+            price_data: {
+              currency: "bgn",
+              product_data: { 
+                name: motorData.name,
+                description: `Manufacturer: ${motorData.manufacturer}`,
+              },
+              unit_amount: Math.round(parseFloat(price) * 100),
             },
-            unit_amount: Math.round(parseFloat(price) * 100),
+            quantity: 1,
           },
-          quantity: 1,
-        },
-      ],
-      metadata: {
-        orderId: orderRef.id,
-        orderNumber
-      }
-    });
+        ],
+        metadata: {
+          orderId: orderRef.id,
+          orderNumber
+        }
+      });
 
-    await orderRef.update({
-      checkoutSessionId: session.id
-    });
+      await orderRef.update({
+        checkoutSessionId: session.id
+      });
 
-    return res.status(200).json({ url: session.url });
+      return res.status(200).json({ url: session.url });
+    } catch (stripeError) {
+      console.error("Stripe API error:", stripeError);
+      await orderRef.delete(); // Rollback order creation if Stripe fails
+      throw new Error("Failed to create Stripe checkout session");
+    }
 
   } catch (error) {
     console.error("Error in /create-checkout-session:", error);
