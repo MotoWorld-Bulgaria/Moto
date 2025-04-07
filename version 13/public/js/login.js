@@ -70,149 +70,179 @@ let allMotors = [];
 
 // Fetch and Display Motors with Filtering and Sorting
 async function displayMotorsOnLogin() {
-    const motorsRef = collection(db, "motors");
-    const snapshot = await getDocs(motorsRef);
-    allMotors = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    
-    // Populate manufacturer filter
-    const manufacturers = [...new Set(allMotors.map(motor => motor.manufacturer))];
-    const manufacturerFilter = document.getElementById('manufacturerFilter');
-    manufacturers.forEach(manufacturer => {
-        const option = document.createElement('option');
-        option.value = manufacturer;
-        option.textContent = manufacturer;
-        manufacturerFilter.appendChild(option);
-    });
+    try {
+        const motorsRef = collection(db, "motors");
+        const snapshot = await getDocs(motorsRef);
+        allMotors = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        
+        const manufacturerFilter = document.getElementById('manufacturerFilter');
+        if (!manufacturerFilter) {
+            console.error('Manufacturer filter element not found');
+            return;
+        }
 
-    // Initial display
-    filterAndDisplayMotors();
+        // Clear existing options first
+        manufacturerFilter.innerHTML = '<option value="">Всички производители</option>';
+        
+        // Populate manufacturer filter
+        const manufacturers = [...new Set(allMotors.map(motor => motor.manufacturer))].sort();
+        manufacturers.forEach(manufacturer => {
+            if (manufacturer) {  // Check for null/undefined manufacturers
+                const option = document.createElement('option');
+                option.value = manufacturer;
+                option.textContent = manufacturer;
+                manufacturerFilter.appendChild(option);
+            }
+        });
+
+        // Initial display
+        filterAndDisplayMotors();
+    } catch (error) {
+        console.error('Error loading motors:', error);
+        const motorsContainer = document.getElementById("motorsContainer");
+        if (motorsContainer) {
+            motorsContainer.innerHTML = '<p class="error">Грешка при зареждане на моторите.</p>';
+        }
+    }
 }
 
 function filterAndDisplayMotors() {
-    const manufacturer = document.getElementById('manufacturerFilter').value;
-    const minPrice = document.getElementById('minPrice').value;
-    const maxPrice = document.getElementById('maxPrice').value;
-    const power = document.getElementById('powerFilter').value;
-    const speed = document.getElementById('speedFilter').value;
-    const sortOption = document.getElementById('sortOption').value;
+    try {
+        const manufacturer = document.getElementById('manufacturerFilter')?.value || '';
+        const minPrice = document.getElementById('minPrice')?.value || '';
+        const maxPrice = document.getElementById('maxPrice')?.value || '';
+        const power = document.getElementById('powerFilter')?.value || '';
+        const speed = document.getElementById('speedFilter')?.value || '';
+        const sortOption = document.getElementById('sortOption')?.value || 'default';
 
-    let filteredMotors = [...allMotors];
+        let filteredMotors = [...allMotors];
 
-    // Apply filters
-    if (manufacturer) {
-        filteredMotors = filteredMotors.filter(motor => motor.manufacturer === manufacturer);
-    }
-    if (minPrice) {
-        filteredMotors = filteredMotors.filter(motor => {
-            // Convert price string to number by removing 'BGN' and parsing
-            const motorPrice = parseFloat(motor.price.replace(/[^\d.]/g, ''));
-            return motorPrice >= parseFloat(minPrice);
-        });
-    }
-    if (maxPrice) {
-        filteredMotors = filteredMotors.filter(motor => {
-            const motorPrice = parseFloat(motor.price.replace(/[^\d.]/g, ''));
-            return motorPrice <= parseFloat(maxPrice);
-        });
-    }
-    if (power) {
-        const powerNum = parseInt(power);
-        if (powerNum === 301) {
-            filteredMotors = filteredMotors.filter(motor => motor.horsepower > 300);
-        } else {
-            filteredMotors = filteredMotors.filter(motor => motor.horsepower <= powerNum);
+        // Apply filters
+        if (manufacturer) {
+            filteredMotors = filteredMotors.filter(motor => motor.manufacturer === manufacturer);
         }
-    }
-    if (speed) {
-        const speedNum = parseInt(speed);
-        if (speedNum === 251) {
-            filteredMotors = filteredMotors.filter(motor => motor.maxSpeed > 250);
-        } else {
-            filteredMotors = filteredMotors.filter(motor => motor.maxSpeed <= speedNum);
+        if (minPrice) {
+            filteredMotors = filteredMotors.filter(motor => {
+                // Convert price string to number by removing 'BGN' and parsing
+                const motorPrice = parseFloat(motor.price.replace(/[^\d.]/g, ''));
+                return motorPrice >= parseFloat(minPrice);
+            });
         }
-    }
+        if (maxPrice) {
+            filteredMotors = filteredMotors.filter(motor => {
+                const motorPrice = parseFloat(motor.price.replace(/[^\d.]/g, ''));
+                return motorPrice <= parseFloat(maxPrice);
+            });
+        }
+        if (power) {
+            const powerNum = parseInt(power);
+            if (powerNum === 301) {
+                filteredMotors = filteredMotors.filter(motor => motor.horsepower > 300);
+            } else {
+                filteredMotors = filteredMotors.filter(motor => motor.horsepower <= powerNum);
+            }
+        }
+        if (speed) {
+            const speedNum = parseInt(speed);
+            if (speedNum === 251) {
+                filteredMotors = filteredMotors.filter(motor => motor.maxSpeed > 250);
+            } else {
+                filteredMotors = filteredMotors.filter(motor => motor.maxSpeed <= speedNum);
+            }
+        }
 
-    // Parse price for sorting and filtering
-    filteredMotors = filteredMotors.map(motor => ({
-        ...motor,
-        numericPrice: parseFloat(motor.price.replace(/[^\d.]/g, '')) // Remove non-numeric characters except decimal point
-    }));
+        // Parse price for sorting and filtering
+        filteredMotors = filteredMotors.map(motor => ({
+            ...motor,
+            numericPrice: parseFloat(motor.price.replace(/[^\d.]/g, '')) // Remove non-numeric characters except decimal point
+        }));
 
-    // Apply sorting
-    switch(sortOption) {
-        case 'nameAsc':
-            filteredMotors.sort((a, b) => a.name.localeCompare(b.name));
-            break;
-        case 'nameDesc':
-            filteredMotors.sort((a, b) => b.name.localeCompare(a.name));
-            break;
-        case 'priceAsc':
-            filteredMotors.sort((a, b) => a.numericPrice - b.numericPrice);
-            break;
-        case 'priceDesc':
-            filteredMotors.sort((a, b) => b.numericPrice - a.numericPrice);
-            break;
-        case 'powerAsc':
-            filteredMotors.sort((a, b) => a.horsepower - b.horsepower);
-            break;
-        case 'powerDesc':
-            filteredMotors.sort((a, b) => b.horsepower - a.horsepower);
-            break;
-        case 'speedAsc':
-            filteredMotors.sort((a, b) => a.maxSpeed - b.maxSpeed);
-            break;
-        case 'speedDesc':
-            filteredMotors.sort((a, b) => b.maxSpeed - a.maxSpeed);
-            break;
-        case 'torqueAsc':
-            filteredMotors.sort((a, b) => a.torque - b.torque);
-            break;
-        case 'torqueDesc':
-            filteredMotors.sort((a, b) => b.torque - a.torque);
-            break;
-    }
+        // Apply sorting
+        switch(sortOption) {
+            case 'nameAsc':
+                filteredMotors.sort((a, b) => a.name.localeCompare(b.name));
+                break;
+            case 'nameDesc':
+                filteredMotors.sort((a, b) => b.name.localeCompare(a.name));
+                break;
+            case 'priceAsc':
+                filteredMotors.sort((a, b) => a.numericPrice - b.numericPrice);
+                break;
+            case 'priceDesc':
+                filteredMotors.sort((a, b) => b.numericPrice - a.numericPrice);
+                break;
+            case 'powerAsc':
+                filteredMotors.sort((a, b) => a.horsepower - b.horsepower);
+                break;
+            case 'powerDesc':
+                filteredMotors.sort((a, b) => b.horsepower - a.horsepower);
+                break;
+            case 'speedAsc':
+                filteredMotors.sort((a, b) => a.maxSpeed - b.maxSpeed);
+                break;
+            case 'speedDesc':
+                filteredMotors.sort((a, b) => b.maxSpeed - a.maxSpeed);
+                break;
+            case 'torqueAsc':
+                filteredMotors.sort((a, b) => a.torque - b.torque);
+                break;
+            case 'torqueDesc':
+                filteredMotors.sort((a, b) => b.torque - a.torque);
+                break;
+        }
 
-    // Display filtered and sorted motors
-    const motorsContainer = document.getElementById("motorsContainer");
-    motorsContainer.innerHTML = filteredMotors.length ? '' : '<p class="no-results">Не са намерени мотори с избраните критерии.</p>';
+        const motorsContainer = document.getElementById("motorsContainer");
+        if (!motorsContainer) {
+            throw new Error('Motors container element not found');
+        }
 
-    filteredMotors.forEach(motor => {
-        motorsContainer.innerHTML += `
-            <div class="row moto10">
-                <div class="col-12 col-md-5">
-                    <img src="${motor.image}" alt="${motor.name}" class="content-image-left img-fluid">
-                </div>
-                <div class="col-12 col-md-7 deviding">
-                    <h2 class="heading">${motor.name}</h2>
-                    <ul class="specs-list">
-                        <li class="specs-item">
-                            <span class="specs-label">Производител:</span>
-                            <span class="specs-value">${motor.manufacturer}</span>
-                        </li>
-                        <li class="specs-item">
-                            <span class="specs-label">Максимална скорост:</span>
-                            <span class="specs-value">${motor.maxSpeed} км/ч</span>
-                        </li>
-                        <li class="specs-item">
-                            <span class="specs-label">Конски сили:</span>
-                            <span class="specs-value">${motor.horsepower}</span>
-                        </li>
-                        <li class="specs-item">
-                            <span class="specs-label">Въртящ момент:</span>
-                            <span class="specs-value">${motor.torque} Nm</span>
-                        </li>
-                        <li class="specs-item">
-                            <span class="specs-label">Цена:</span>
-                            <span class="specs-value price-value">${motor.price} BGN</span>
-                        </li>
-                    </ul>
-                    <div class="d-flex justify-content-center">
-                        <button onclick="handlePurchase('${motor.name}', ${motor.numericPrice}); sendMail();" class="btn btnor">Поръчай</button>
+        // Display filtered and sorted motors
+        motorsContainer.innerHTML = filteredMotors.length ? '' : '<p class="no-results">Не са намерени мотори с избраните критерии.</p>';
+
+        filteredMotors.forEach(motor => {
+            motorsContainer.innerHTML += `
+                <div class="row moto10">
+                    <div class="col-12 col-md-5">
+                        <img src="${motor.image}" alt="${motor.name}" class="content-image-left img-fluid">
+                    </div>
+                    <div class="col-12 col-md-7 deviding">
+                        <h2 class="heading">${motor.name}</h2>
+                        <ul class="specs-list">
+                            <li class="specs-item">
+                                <span class="specs-label">Производител:</span>
+                                <span class="specs-value">${motor.manufacturer}</span>
+                            </li>
+                            <li class="specs-item">
+                                <span class="specs-label">Максимална скорост:</span>
+                                <span class="specs-value">${motor.maxSpeed} км/ч</span>
+                            </li>
+                            <li class="specs-item">
+                                <span class="specs-label">Конски сили:</span>
+                                <span class="specs-value">${motor.horsepower}</span>
+                            </li>
+                            <li class="specs-item">
+                                <span class="specs-label">Въртящ момент:</span>
+                                <span class="specs-value">${motor.torque} Nm</span>
+                            </li>
+                            <li class="specs-item">
+                                <span class="specs-label">Цена:</span>
+                                <span class="specs-value price-value">${motor.price} BGN</span>
+                            </li>
+                        </ul>
+                        <div class="d-flex justify-content-center">
+                            <button onclick="handlePurchase('${motor.name}', ${motor.numericPrice}); sendMail();" class="btn btnor">Поръчай</button>
+                        </div>
                     </div>
                 </div>
-            </div>
-        `;
-    });
+            `;
+        });
+    } catch (error) {
+        console.error('Error filtering motors:', error);
+        const motorsContainer = document.getElementById("motorsContainer");
+        if (motorsContainer) {
+            motorsContainer.innerHTML = '<p class="error">Грешка при филтриране на моторите.</p>';
+        }
+    }
 }
 
 window.handlePurchase = async function(name, price) {
@@ -331,27 +361,66 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('sortOption').addEventListener('change', filterAndDisplayMotors);
 });
 
+// Cleanup function for event listeners
+function cleanup() {
+    const elements = {
+        applyFilters: document.getElementById('applyFilters'),
+        resetFilters: document.getElementById('resetFilters'),
+        sortOption: document.getElementById('sortOption'),
+        logoutLink: document.getElementById('logoutLink')
+    };
+
+    // Remove event listeners if elements exist
+    if (elements.applyFilters) {
+        elements.applyFilters.removeEventListener('click', filterAndDisplayMotors);
+    }
+    if (elements.resetFilters) {
+        elements.resetFilters.removeEventListener('click', resetFilters);
+    }
+    if (elements.sortOption) {
+        elements.sortOption.removeEventListener('change', filterAndDisplayMotors);
+    }
+    if (elements.logoutLink) {
+        elements.logoutLink.removeEventListener('click', handleLogout);
+    }
+}
+
+// Add cleanup to window unload
+window.addEventListener('unload', cleanup);
+
+// Initialize the display only after DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    displayMotorsOnLogin();
+    // ...existing event listener code...
+});
+
 displayMotorsOnLogin();
 
 /// Правим функцията глобална
 window.sendMail = function () {
-  const user = auth.currentUser;
-  if (!user) {
-      alert("Трябва да сте влезли в профила си, за да получите email.");
-      return;
-  }
+    if (typeof emailjs === 'undefined') {
+        console.error('EmailJS is not loaded');
+        alert('Error: Email service is not available');
+        return;
+    }
+    
+    const user = auth.currentUser;
+    if (!user) {
+        alert("Трябва да сте влезли в профила си, за да получите email.");
+        return;
+    }
 
-  let params = {
-      email: user.email
-  };
+    let params = {
+        email: user.email
+    };
 
-  emailjs.send("service_td105sn", "template_t6dcgla", params)
-      .then(function(response) {
-          console.log("Email sent successfully!", response);
-          alert("Email изпратен успешно!");
-      })
-      .catch(function(error) {
-          console.error("Error sending email:", error);
-          alert("Грешка при изпращане на email.");
-      });
+    emailjs.send("service_td105sn", "template_t6dcgla", params)
+        .then(function(response) {
+            console.log("Email sent successfully!", response);
+            alert("Email изпратен успешно!");
+        })
+        .catch(function(error) {
+            console.error("Error sending email:", error);
+            alert("Грешка при изпращане на email.");
+        });
 };
