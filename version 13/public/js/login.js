@@ -233,7 +233,7 @@ window.handlePurchase = async function(name, price) {
       throw new Error('Motor details not found');
     }
 
-    const response = await fetch('https://moto-eight.vercel.app/create-checkout-session', { 
+    const response = await fetch('/api/create-checkout-session', { 
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
