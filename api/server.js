@@ -32,7 +32,16 @@ app.use(cors({
   methods: ['GET', 'POST'],
   credentials: true
 }));
-app.use(express.json());
+app.use(express.json({
+  verify: (req, res, buf) => {
+    try {
+      JSON.parse(buf.toString());
+    } catch (err) {
+      console.error("Invalid JSON payload:", buf.toString());
+      throw new Error("Invalid JSON payload");
+    }
+  }
+}));
 app.use(express.static(path.join(__dirname)));
 
 // Serve login.html
