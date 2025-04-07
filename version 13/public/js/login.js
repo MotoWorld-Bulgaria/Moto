@@ -233,11 +233,13 @@ window.handlePurchase = async function(name, price) {
       throw new Error('Motor details not found');
     }
 
-    const response = await fetch('http://localhost:3000/create-checkout-session', {
+    const response = await fetch('https://moto-7dgkiusus-motoworld-bulgarias-projects.vercel.app/create-checkout-session', { 
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
+      });
+
       body: JSON.stringify({
         name: name,
         price: parseFloat(price),
