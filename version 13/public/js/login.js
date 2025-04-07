@@ -261,9 +261,12 @@ window.handlePurchase = async function(name, price) {
       throw new Error('Invalid JSON response from server');
     }
   } else {
-    responseData = await response.text();
-    console.error(`Server error: ${responseData}`);
-    throw new Error(`Server error: ${responseData}`);
+    try {
+      responseData = await response.text();
+    } catch (e) {
+      console.error('Error reading server response:', e);
+      throw new Error('Error reading server response');
+    }
   }
 
   if (!response.ok) {
