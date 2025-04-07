@@ -253,11 +253,9 @@ window.handlePurchase = async function(name, price) {
       return;
     }
 
-    // Format price to ensure it's a valid number with 2 decimal places
-    const formattedPrice = parseFloat(price).toFixed(2);
-    
-    // Validate price
-    if (isNaN(formattedPrice) || formattedPrice <= 0) {
+    // Ensure price is a valid number
+    const numericPrice = Number(price);
+    if (isNaN(numericPrice) || numericPrice <= 0) {
       throw new Error('Невалидна цена');
     }
 
@@ -269,42 +267,47 @@ window.handlePurchase = async function(name, price) {
       throw new Error('Информацията за мотора не е намерена');
     }
 
+    // Simplified payload
     const requestData = {
-      name: name,
-      price: Number(formattedPrice),
-      userData: {
+      motorDetails: {
+        name: name,
+        price: numericPrice,
+        manufacturer: motorData.manufacturer
+      },
+      customer: {
         uid: user.uid,
         email: user.email,
-        displayName: userData.displayName || null,
-        ...userData
-      },
-      motorData: {
-        name: motorData.name,
-        manufacturer: motorData.manufacturer,
-        price: formattedPrice,
-        image: motorData.image
+        name: userData.displayName || 'Guest'
       }
     };
 
-    const response = await fetch('/api/create-checkout-session', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(requestData)
-    });
+    try {
+      const response = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestData)
+      });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(errorText || `Грешка при обработка на поръчката (${response.status})`);
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => null);
+        throw new Error(errorData?.error || `Server error: ${response.status}`);
+      }
+
+      const { url } = await response.json();
+      if (!url) {
+        throw new Error('No checkout URL received from server');
+      }
+
+      // Redirect to checkout
+      window.location.href = url;
+
+    } catch (fetchError) {
+      console.error('Fetch error:', fetchError);
+      throw new Error(`Грешка при свързване със сървъра: ${fetchError.message}`);
     }
 
-    const responseData = await response.json();
-    if (!responseData.url) {
-      throw new Error('Невалиден отговор от сървъра');
-    }
-
-    window.location.href = responseData.url;
   } catch (error) {
     console.error('Purchase error:', error);
     alert(`Грешка при обработка на поръчката: ${error.message}`);
