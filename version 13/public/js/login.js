@@ -249,7 +249,16 @@ window.handlePurchase = async function(name, price) {
   try {
     const user = auth.currentUser;
     if (!user) {
-      throw new Error('User must be logged in to make a purchase');
+      alert('Моля, влезте в профила си, за да направите поръчка.');
+      return;
+    }
+
+    // Format price to ensure it's a valid number with 2 decimal places
+    const formattedPrice = parseFloat(price).toFixed(2);
+    
+    // Validate price
+    if (isNaN(formattedPrice) || formattedPrice <= 0) {
+      throw new Error('Невалидна цена');
     }
 
     const userDoc = await getDoc(doc(db, "users", user.uid));
@@ -257,45 +266,48 @@ window.handlePurchase = async function(name, price) {
 
     const motorData = allMotors.find(motor => motor.name === name);
     if (!motorData) {
-      throw new Error('Motor details not found');
+      throw new Error('Информацията за мотора не е намерена');
     }
+
+    const requestData = {
+      name: name,
+      price: Number(formattedPrice),
+      userData: {
+        uid: user.uid,
+        email: user.email,
+        displayName: userData.displayName || null,
+        ...userData
+      },
+      motorData: {
+        name: motorData.name,
+        manufacturer: motorData.manufacturer,
+        price: formattedPrice,
+        image: motorData.image
+      }
+    };
 
     const response = await fetch('/api/create-checkout-session', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        name: name,
-        price: parseFloat(price),
-        userData: {
-          uid: user.uid,
-          email: user.email,
-          displayName: userData.displayName || null,
-          ...userData
-        },
-        motorData: motorData,
-      })
+      body: JSON.stringify(requestData)
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const errorText = await response.text();
+      throw new Error(errorText || `Грешка при обработка на поръчката (${response.status})`);
     }
 
-    const responseData = await (
-      response.headers.get("content-type")?.indexOf("application/json") !== -1
-        ? response.json()
-        : response.text()
-    );
-
-    if (typeof responseData === 'string') {
-      throw new Error(`Server error: ${responseData}`);
+    const responseData = await response.json();
+    if (!responseData.url) {
+      throw new Error('Невалиден отговор от сървъра');
     }
 
     window.location.href = responseData.url;
   } catch (error) {
     console.error('Purchase error:', error);
-    alert('Error processing purchase: ' + error.message);
+    alert(`Грешка при обработка на поръчката: ${error.message}`);
   }
 };
 
