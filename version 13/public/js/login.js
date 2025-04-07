@@ -233,50 +233,43 @@ window.handlePurchase = async function(name, price) {
       throw new Error('Motor details not found');
     }
 
-  const response = await fetch('/api/create-checkout-session', { 
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      name: name,
-      price: parseFloat(price),
-      userData: {
-        uid: user.uid,
-        email: user.email,
-        displayName: userData.displayName || null,
-        ...userData
+    const response = await fetch('/api/create-checkout-session', { 
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
       },
-      motorData: motorData,
-    })
-  });
+      body: JSON.stringify({
+        name: name,
+        price: parseFloat(price),
+        userData: {
+          uid: user.uid,
+          email: user.email,
+          displayName: userData.displayName || null,
+          ...userData
+        },
+        motorData: motorData,
+      })
+    });
 
-  let responseData;
-  const contentType = response.headers.get("content-type");
-  if (contentType && contentType.indexOf("application/json") !== -1) {
-    try {
+    let responseData;
+    const contentType = response.headers.get("content-type");
+    
+    if (contentType && contentType.indexOf("application/json") !== -1) {
       responseData = await response.json();
-    } catch (e) {
-      console.error('Invalid JSON response from server:', e);
-      throw new Error('Invalid JSON response from server');
-    }
-  } else {
-    try {
+    } else {
       responseData = await response.text();
-    } catch (e) {
-      console.error('Error reading server response:', e);
-      throw new Error('Error reading server response');
+      console.error(`Server error: ${responseData}`);
+      throw new Error(`Server error: ${responseData}`);
     }
-  }
 
-  if (!response.ok) {
-    throw new Error(responseData.message || `HTTP error! status: ${response.status}`);
-  }
+    if (!response.ok) {
+      throw new Error(responseData.message || `HTTP error! status: ${response.status}`);
+    }
 
-  window.location.href = responseData.url;
-} catch (error) {
-  console.error('Purchase error:', error);
-  alert('Error processing purchase: ' + error.message);
+    window.location.href = responseData.url;
+  } catch (error) {
+    console.error('Purchase error:', error);
+    alert('Error processing purchase: ' + error.message);
   }
 };
 
