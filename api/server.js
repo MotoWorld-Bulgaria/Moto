@@ -52,14 +52,13 @@ function generateOrderNumber() {
 app.post("/create-checkout-session", async (req, res) => {
   try {
     const { name, price, userData, motorData } = req.body;
-    console.log('Received request:', JSON.stringify(req.body, null, 2));
-
+    
+    // Validate request data
     if (!name || !price || !userData?.uid || !motorData?.name) {
-      console.error('Missing required fields:', { name, price, userData, motorData });
-      return res.status(400).send(JSON.stringify({
+      return res.status(400).json({
         error: "Missing required fields",
         message: "Липсват задължителни данни"
-      }));
+      });
     }
 
     const orderNumber = generateOrderNumber();
@@ -76,15 +75,13 @@ app.post("/create-checkout-session", async (req, res) => {
       createdAt: admin.firestore.FieldValue.serverTimestamp()
     };
 
-    console.log('Creating order with data:', JSON.stringify(orderData, null, 2));
-
     const orderRef = await db.collection('orders').add(orderData);
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       mode: "payment",
-      success_url: `${req.headers.origin || 'http://localhost:3000'}/success.html`,
-      cancel_url: `${req.headers.origin || 'http://localhost:3000'}/cancel`,
+      success_url: `${process.env.FRONTEND_URL || req.headers.origin || 'http://localhost:3000'}/success.html`,
+      cancel_url: `${process.env.FRONTEND_URL || req.headers.origin || 'http://localhost:3000'}/cancel`,
       line_items: [
         {
           price_data: {
@@ -108,14 +105,14 @@ app.post("/create-checkout-session", async (req, res) => {
       checkoutSessionId: session.id
     });
 
-    res.setHeader('Content-Type', 'application/json');
-    res.send(JSON.stringify({ url: session.url }));
+    return res.status(200).json({ url: session.url });
+    
   } catch (error) {
     console.error("Server error:", error);
-    res.status(500).send(JSON.stringify({
+    return res.status(500).json({
       error: "Server error",
       message: error.message || "Internal server error"
-    }));
+    });
   }
 });
 

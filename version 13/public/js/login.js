@@ -282,24 +282,29 @@ window.handlePurchase = async function(name, price) {
       }
     };
 
-    console.log('Sending request:', requestData);
-
     const response = await fetch('/api/create-checkout-session', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Accept': 'application/json'
       },
       body: JSON.stringify(requestData)
     });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Server error');
+    let responseData;
+    try {
+      responseData = await response.json();
+    } catch (parseError) {
+      console.error('Response parsing error:', parseError);
+      throw new Error('Невалиден отговор от сървъра');
     }
 
-    const responseData = await response.json();
+    if (!response.ok) {
+      throw new Error(responseData.message || 'Грешка при обработка на поръчката');
+    }
+
     if (!responseData.url) {
-      throw new Error('No checkout URL received');
+      throw new Error('Липсва URL за плащане');
     }
 
     window.location.href = responseData.url;
