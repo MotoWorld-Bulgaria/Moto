@@ -1,7 +1,10 @@
-{ "src": "version 13/public/**/*", "use": "@vercel/static" }
-   ],
-   "routes": [
-     { "src": "/api/(.*)", "dest": "/server.js" },
-     { "src": "/(.*)", "dest": "/version 13/public/$1" }
-   ]
- }
+{
+  "static": {
+    "src": "version 13/public/**/*",
+    "use": "@vercel/static"
+  },
+  "routes": [
+    { "src": "/api/(.*)", "dest": "/server.js" },
+    { "src": "/(.*)", "dest": "/version 13/public/$1" }
+  ]
+}
