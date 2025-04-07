@@ -1,9 +1,10 @@
 {
   "version": 2,
+  "public": "version 13",
   "builds": [
-    { "src": "server.js", "use": "@vercel/node" }
+    { "src": "version 13/index.html", "use": "@vercel/static" }
   ],
   "routes": [
-    { "src": "/(.*)", "dest": "server.js" }
+    { "src": "/(.*)", "dest": "/version 13/index.html" }
   ]
 }
