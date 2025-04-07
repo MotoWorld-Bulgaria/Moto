@@ -300,6 +300,7 @@ window.handlePurchase = async function(name, price) {
     }
 
     if (!response.ok) {
+      console.error('Server error response:', responseData);
       throw new Error(responseData.message || 'Грешка при обработка на поръчката');
     }
 

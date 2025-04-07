@@ -52,9 +52,10 @@ function generateOrderNumber() {
 app.post("/create-checkout-session", async (req, res) => {
   try {
     const { name, price, userData, motorData } = req.body;
-    
+
     // Validate request data
     if (!name || !price || !userData?.uid || !motorData?.name) {
+      console.error("Validation error: Missing required fields", { name, price, userData, motorData });
       return res.status(400).json({
         error: "Missing required fields",
         message: "Липсват задължителни данни"
@@ -62,7 +63,7 @@ app.post("/create-checkout-session", async (req, res) => {
     }
 
     const orderNumber = generateOrderNumber();
-    
+
     const orderData = {
       orderNumber,
       productDetails: {
@@ -106,9 +107,9 @@ app.post("/create-checkout-session", async (req, res) => {
     });
 
     return res.status(200).json({ url: session.url });
-    
+
   } catch (error) {
-    console.error("Server error:", error);
+    console.error("Error in /create-checkout-session:", error);
     return res.status(500).json({
       error: "Server error",
       message: error.message || "Internal server error"
