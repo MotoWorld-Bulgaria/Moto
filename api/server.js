@@ -52,25 +52,31 @@ function generateOrderNumber() {
 app.post("/create-checkout-session", async (req, res) => {
   try {
     const { name, price, userData, motorData } = req.body;
-    console.log('Creating order:', { name, price, userData, motorData });
+    console.log('Received request:', JSON.stringify(req.body, null, 2));
 
-    if (!name || !price || !userData || !motorData) {
+    if (!name || !price || !userData?.uid || !motorData?.name) {
+      console.error('Missing required fields:', { name, price, userData, motorData });
       return res.status(400).json({
         error: "Missing required fields",
-        message: "All order data is required"
+        message: "Липсват задължителни данни"
       });
     }
 
     const orderNumber = generateOrderNumber();
     
     const orderData = {
-      orderNumber: orderNumber,
-      productDetails: motorData,
+      orderNumber,
+      productDetails: {
+        ...motorData,
+        price: parseFloat(price)
+      },
       customer: userData,
       status: 'pending',
       orderDate: admin.firestore.FieldValue.serverTimestamp(),
       createdAt: admin.firestore.FieldValue.serverTimestamp()
     };
+
+    console.log('Creating order with data:', JSON.stringify(orderData, null, 2));
 
     const orderRef = await db.collection('orders').add(orderData);
 
@@ -83,7 +89,10 @@ app.post("/create-checkout-session", async (req, res) => {
         {
           price_data: {
             currency: "bgn",
-            product_data: { name: motorData.name },
+            product_data: { 
+              name: motorData.name,
+              description: `Manufacturer: ${motorData.manufacturer}`,
+            },
             unit_amount: Math.round(parseFloat(price) * 100),
           },
           quantity: 1,
@@ -91,7 +100,7 @@ app.post("/create-checkout-session", async (req, res) => {
       ],
       metadata: {
         orderId: orderRef.id,
-        orderNumber: orderNumber
+        orderNumber
       }
     });
 
@@ -101,10 +110,10 @@ app.post("/create-checkout-session", async (req, res) => {
 
     res.json({ url: session.url });
   } catch (error) {
-    console.error("Error creating order:", error);
+    console.error("Server error:", error);
     res.status(500).json({
-      error: "Failed to create order",
-      message: error.message
+      error: "Server error",
+      message: error.message || "Internal server error"
     });
   }
 });

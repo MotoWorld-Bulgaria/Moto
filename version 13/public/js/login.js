@@ -253,8 +253,7 @@ window.handlePurchase = async function(name, price) {
       return;
     }
 
-    // Ensure price is a valid number
-    const numericPrice = Number(price);
+    const numericPrice = parseFloat(price);
     if (isNaN(numericPrice) || numericPrice <= 0) {
       throw new Error('Невалидна цена');
     }
@@ -267,46 +266,50 @@ window.handlePurchase = async function(name, price) {
       throw new Error('Информацията за мотора не е намерена');
     }
 
-    // Simplified payload
     const requestData = {
-      motorDetails: {
-        name: name,
-        price: numericPrice,
-        manufacturer: motorData.manufacturer
-      },
-      customer: {
+      name: motorData.name,
+      price: numericPrice,
+      userData: {
         uid: user.uid,
         email: user.email,
-        name: userData.displayName || 'Guest'
+        displayName: userData.displayName || user.email
+      },
+      motorData: {
+        name: motorData.name,
+        manufacturer: motorData.manufacturer,
+        price: numericPrice,
+        image: motorData.image
       }
     };
 
+    console.log('Sending request:', requestData);
+
+    const response = await fetch('/api/create-checkout-session', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestData)
+    });
+
+    const responseText = await response.text();
+    let responseData;
     try {
-      const response = await fetch('/api/create-checkout-session', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestData)
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => null);
-        throw new Error(errorData?.error || `Server error: ${response.status}`);
-      }
-
-      const { url } = await response.json();
-      if (!url) {
-        throw new Error('No checkout URL received from server');
-      }
-
-      // Redirect to checkout
-      window.location.href = url;
-
-    } catch (fetchError) {
-      console.error('Fetch error:', fetchError);
-      throw new Error(`Грешка при свързване със сървъра: ${fetchError.message}`);
+      responseData = JSON.parse(responseText);
+    } catch (e) {
+      console.error('Failed to parse response:', responseText);
+      throw new Error('Invalid server response');
     }
+
+    if (!response.ok) {
+      throw new Error(responseData.message || 'Server error');
+    }
+
+    if (!responseData.url) {
+      throw new Error('No checkout URL received');
+    }
+
+    window.location.href = responseData.url;
 
   } catch (error) {
     console.error('Purchase error:', error);
