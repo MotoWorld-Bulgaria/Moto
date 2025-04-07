@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="bg">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MotoWorld</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/loginstyle.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton+SC&family=Bebas+Neue&family=Matemasie&family=New+Amsterdam&family=Poppins:wght@500&family=Roboto:wght@700&family=Rubik+Doodle+Shadow&family=Share+Tech&family=Sofia+Sans:ital,wght@0,1..1000;1,1..1000&family=Sono:wght@200..800&family=Timmana&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico.png">
+    <link href="https://fonts.googleapis.com/css2?family=Russo+One&display=swap" rel="stylesheet">
+
+    <script type="text/javascript"
+        src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js">
+    </script>
+    <script type="text/javascript">
+    (function(){
+        emailjs.init({
+          publicKey: "SMSEe8WkQjM5G9DHS",
+        });
+    })();
+</script>
+
+  </head>
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+      <div class="container-fluid">
+        <a class="navbar-brand nav-link" href="#">MotoWorld</a>
+        <button class="navbar-toggler ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <div class="burger-menu">
+            <div class="line"></div>
+            <div class="line"></div>
+            <div class="line"></div>
+          </div>
+        </button>
+        <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item center-links">
+              <a class="nav-link" href="#">Начало</a>
+            </li>
+            <li class="nav-item center-links">
+              <a class="nav-link" href="#2">Moto-Shop</a>
+            </li>
+            <li class="nav-item center-links">
+              <a class="nav-link" href="#scrollspyHeading2">За нас</a>
+            </li>
+            <li class="nav-item center-links">
+              <a class="nav-link" href="#4">Контакти</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="userEmail" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <!-- User email will be inserted here -->
+              </a>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="account.html">Акаунт</a></li>
+                <li><a class="dropdown-item" id="logoutLink" href="#">Излез</a></li>
+                <li><a class="dropdown-item" id="adminLink" href="admintest.html" style="display: none;"> Админ</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal" style="display: none;">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Вход</h2>
+        <form id="loginForm">
+          <input type="email" name="email" placeholder="ИМЕЙЛ" required>
+          <input type="password" name="password" placeholder="ПАРОЛА" required>
+          <button type="submit">ВЛЕЗ</button>
+        </form>
+        <a href="#" class="switch-modal-link" data-target-modal="registerModal">НЯМАТЕ АКАУНТ?</a>
+      </div>
+    </div>
+
+    <!-- Registration Modal -->
+    <div id="registerModal" class="modal" style="display: none;">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Регистрация</h2>
+        <form id="registerForm">
+          <input type="text" name="username" placeholder="ПОТРЕБИТЕЛСКО ИМЕ" required>
+          <input type="email" name="email" placeholder="ИМЕЙЛ" required>
+          <input type="password" name="password" placeholder="ПАРОЛА" required>
+          <input type="password" name="confirmPassword" placeholder="ПОВТОРЕТЕ ПАРОЛАТА" required>
+          <button type="submit">РЕГИСТРИРАЙ СЕ</button>
+        </form>
+        <a href="#" class="switch-modal-link" data-target-modal="loginModal">ВЕЧЕ ИМАТЕ АКАУНТ?</a>
+      </div>
+    </div>
+
+    <div class="page1">
+      <div id="1" class="divibertop blurbackground">
+        <!-- Home Page -->
+        <div class="divibertop"></div>
+        <div class="container center ">
+          <div class="row">
+            <div class="col-md-12">
+              <h1>Добре дошли в Moto World</h1>
+              <p>Изследвайте света на две колела.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="2"></div>
+    <!--Filters and Sorting Section-->
+    <div class="filters-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3"> <!-- Changed from col-md-4 to col-md-3 -->
+                    <div class="filter-card">
+                        <div class="filter-header">
+                            <h3>Филтри и сортиране</h3>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label>Сортирай по</label>
+                            <select id="sortOption" class="form-select">
+                                <option value="default">По подразбиране</option>
+                                <option value="nameAsc">Име (А-Я)</option>
+                                <option value="nameDesc">Име (Я-А)</option>
+                                <option value="priceAsc">Цена (ниска към висока)</option>
+                                <option value="priceDesc">Цена (висока към ниска)</option>
+                                <option value="powerAsc">Мощност (ниска към висока)</option>
+                                <option value="powerDesc">Мощност (висока към ниска)</option>
+                                <option value="speedAsc">Скорост (ниска към висока)</option>
+                                <option value="speedDesc">Скорост (висока към ниска)</option>
+                                <option value="torqueAsc">Въртящ момент (нисък към висок)</option>
+                                <option value="torqueDesc">Въртящ момент (висок към нисък)</option>
+                            </select>
+                        </div>
+
+                        <div class="divider"></div>
+
+                        <div class="filter-group">
+                            <label>Производител</label>
+                            <select id="manufacturerFilter" class="form-select">
+                                <option value="">Всички</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label>Ценови диапазон</label>
+                            <div class="price-range">
+                                <input type="number" id="minPrice" placeholder="Мин." class="form-control">
+                                <span>-</span>
+                                <input type="number" id="maxPrice" placeholder="Макс." class="form-control">
+                            </div>
+                        </div>
+
+                        <div class="filter-group">
+                            <label>Мощност</label>
+                            <select id="powerFilter" class="form-select">
+                                <option value="">Всички</option>
+                                <option value="100">До 100 hp</option>
+                                <option value="200">100-200 hp</option>
+                                <option value="300">200-300 hp</option>
+                                <option value="301">Над 300 hp</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label>Максимална скорост</label>
+                            <select id="speedFilter" class="form-select">
+                                <option value="">Всички</option>
+                                <option value="150">До 150 км/ч</option>
+                                <option value="200">150-200 км/ч</option>
+                                <option value="250">200-250 км/ч</option>
+                                <option value="251">Над 250 км/ч</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-actions">
+                            <button id="applyFilters" class="btn btnor applybut">Приложи</button>
+                            <button id="resetFilters" class="btn btnor-outline clearbut">Изчисти</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-9"> <!-- Changed from col-md-8 to col-md-9 -->
+                    <div class="motors-scroll-container">
+                        <div id="motorsContainer">
+                            <!-- Motors will be dynamically added here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Top10(2nd page)-->
+    
+
+    <!-- About Us Section -->
+    <div class="aboutus" id="scrollspyHeading2">
+      <div class="aboutus-content">
+        <h1>За нас</h1>
+        <p>Добре дошли в MotoWorld - вашият доверен партньор в света на мотоциклетите. С дългогодишен опит в бранша, ние предлагаме внимателно подбрана селекция от най-добрите мотоциклети на пазара.</p>
+        <p>Нашият екип от експерти е тук, за да ви помогне да намерите перфектния мотоциклет, отговарящ на вашите нужди и бюджет. Предлагаме богата гама от модели - от спортни до туристически, от градски до офроуд машини, с гарантирано качество и изгодни цени.</p>
+        <p>В MotoWorld вярваме в изграждането на дългосрочни отношения с нашите клиенти. Затова предлагаме не само продажба, но и професионална консултация, следпродажбено обслужване и поддръжка. Доверете се на нас за вашата следваща мотоциклетна покупка!</p>
+    </div>
+    </div>
+
+    <!-- Contact Us Section -->
+    <div id="4" class="contactus">
+      <div class="container">
+        <h1>Контакти</h1>
+        <p>Телефон: +359 881968968</p>
+        <p>Имейл: <a href="mailto:motoworld@gmail.com">motoworldbulgaria@gmail.com</a></p>
+      </div>
+    </div>
+
+    <script type="module" src="js/login.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  </body>
+</html>
