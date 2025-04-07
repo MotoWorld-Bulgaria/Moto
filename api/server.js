@@ -4,7 +4,7 @@ import Stripe from "stripe";
 import dotenv from "dotenv";
 import admin from "firebase-admin";
 import path from "path";
-import { fileURLToPath } from "url"; // Fix for __dirname in ES Modules
+import { fileURLToPath } from "url";
 
 // Fix __dirname for ES Modules
 const __filename = fileURLToPath(import.meta.url);
@@ -13,7 +13,10 @@ const __dirname = path.dirname(__filename);
 // Load environment variables
 dotenv.config();
 
-// Parse JSON correctly
+if (!process.env.FIREBASE_SERVICE_ACCOUNT) {
+  throw new Error("Missing FIREBASE_SERVICE_ACCOUNT in environment variables.");
+}
+
 const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
 
 admin.initializeApp({
@@ -60,7 +63,6 @@ app.post("/create-checkout-session", async (req, res) => {
 
     const orderNumber = generateOrderNumber();
     
-    // Create order in Firestore with full details
     const orderData = {
       orderNumber: orderNumber,
       productDetails: motorData,
@@ -136,8 +138,10 @@ app.post("/webhook", express.raw({ type: 'application/json' }), async (req, res)
   res.status(200).json({ received: true });
 });
 
+// Redirect to login page on success
 app.get("/success.html", (req, res) => {
   res.redirect("/login.html");
 });
 
-app.listen(3000, () => console.log("🚀 Server running on port 3000"));
+// Required for Vercel
+export default app;
