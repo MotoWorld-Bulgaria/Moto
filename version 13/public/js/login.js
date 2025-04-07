@@ -217,23 +217,20 @@ function filterAndDisplayMotors() {
 
 window.handlePurchase = async function(name, price) {
   try {
-    // Get current user data
     const user = auth.currentUser;
     if (!user) {
       throw new Error('User must be logged in to make a purchase');
     }
 
-    // Get user details from Firestore
     const userDoc = await getDoc(doc(db, "users", user.uid));
     const userData = userDoc.exists() ? userDoc.data() : { email: user.email };
 
-    // Find the complete motor data from allMotors array
     const motorData = allMotors.find(motor => motor.name === name);
     if (!motorData) {
       throw new Error('Motor details not found');
     }
 
-    const response = await fetch('/api/create-checkout-session', { 
+    const response = await fetch('/api/create-checkout-session', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -251,19 +248,18 @@ window.handlePurchase = async function(name, price) {
       })
     });
 
-    let responseData;
-    const contentType = response.headers.get("content-type");
-    
-    if (contentType && contentType.indexOf("application/json") !== -1) {
-      responseData = await response.json();
-    } else {
-      responseData = await response.text();
-      console.error(`Server error: ${responseData}`);
-      throw new Error(`Server error: ${responseData}`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    if (!response.ok) {
-      throw new Error(responseData.message || `HTTP error! status: ${response.status}`);
+    const responseData = await (
+      response.headers.get("content-type")?.indexOf("application/json") !== -1
+        ? response.json()
+        : response.text()
+    );
+
+    if (typeof responseData === 'string') {
+      throw new Error(`Server error: ${responseData}`);
     }
 
     window.location.href = responseData.url;
