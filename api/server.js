@@ -56,10 +56,10 @@ app.post("/create-checkout-session", async (req, res) => {
 
     if (!name || !price || !userData?.uid || !motorData?.name) {
       console.error('Missing required fields:', { name, price, userData, motorData });
-      return res.status(400).json({
+      return res.status(400).send(JSON.stringify({
         error: "Missing required fields",
         message: "Липсват задължителни данни"
-      });
+      }));
     }
 
     const orderNumber = generateOrderNumber();
@@ -83,8 +83,8 @@ app.post("/create-checkout-session", async (req, res) => {
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       mode: "payment",
-      success_url: `${req.protocol}://${req.get('host')}/success.html`,
-      cancel_url: `${req.protocol}://${req.get('host')}/cancel`,
+      success_url: `${req.headers.origin || 'http://localhost:3000'}/success.html`,
+      cancel_url: `${req.headers.origin || 'http://localhost:3000'}/cancel`,
       line_items: [
         {
           price_data: {
@@ -108,13 +108,14 @@ app.post("/create-checkout-session", async (req, res) => {
       checkoutSessionId: session.id
     });
 
-    res.json({ url: session.url });
+    res.setHeader('Content-Type', 'application/json');
+    res.send(JSON.stringify({ url: session.url }));
   } catch (error) {
     console.error("Server error:", error);
-    res.status(500).json({
+    res.status(500).send(JSON.stringify({
       error: "Server error",
       message: error.message || "Internal server error"
-    });
+    }));
   }
 });
 

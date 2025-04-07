@@ -292,19 +292,12 @@ window.handlePurchase = async function(name, price) {
       body: JSON.stringify(requestData)
     });
 
-    const responseText = await response.text();
-    let responseData;
-    try {
-      responseData = JSON.parse(responseText);
-    } catch (e) {
-      console.error('Failed to parse response:', responseText);
-      throw new Error('Invalid server response');
-    }
-
     if (!response.ok) {
-      throw new Error(responseData.message || 'Server error');
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Server error');
     }
 
+    const responseData = await response.json();
     if (!responseData.url) {
       throw new Error('No checkout URL received');
     }
