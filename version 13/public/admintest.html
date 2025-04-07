@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <title>MotoWorld Premium - Admin Panel</title>
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico.png">
+    <link rel="stylesheet" href="css/admintest.css">
+</head>
+<body>
+    <div class="burger-menu">
+        <div class="burger-icon">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <div class="menu-items">
+            <a href="login.html">Начална страница</a>
+            <a href="orders.html">Управление на поръчки</a>
+        </div>
+    </div>
+    <div class="container">
+        <h1>Администраторски център</h1>
+
+        <section class="add-motor-section">
+            <h2>Добави нов мотоциклет</h2>
+            <form id="addMotorForm">
+                <h3 class="form-section-title">Основна информация</h3>
+                
+                <div class="form-group">
+                    <label for="name">Име на мотор</label>
+                    <input type="text" id="name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="manufacturer">Производител</label>
+                    <input type="text" id="manufacturer" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="price">Цена</label>
+                    <input type="text" id="price" required>
+                </div>
+
+                <div class="form-divider"></div>
+                <h3 class="form-section-title">Технически данни</h3>
+                
+                <div class="form-group">
+                    <label for="maxSpeed">Максимална скорост</label>
+                    <input type="text" id="maxSpeed" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="horsepower">Конски сили</label>
+                    <input type="text" id="horsepower" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="torque">Въртящ момент</label>
+                    <input type="text" id="torque" required>
+                </div>
+
+                <div class="form-divider"></div>
+                <h3 class="form-section-title">Изображение</h3>
+                
+                <div class="form-group" style="grid-column: 1 / -1;">
+                    <label for="image">URL на изображението</label>
+                    <input type="text" id="image" required>
+                </div>
+                
+                <div class="form-submit">
+                    <button type="submit">Добавяне на мотор</button>
+                </div>
+            </form>
+        </section>
+
+        <section class="motors-list-section">
+            <h2>Каталог мотоциклети</h2>
+            <div class="motors-grid">
+                <!-- Motor items will be dynamically inserted here by JavaScript -->
+            </div>
+        </section>
+
+        <script type="module" src="js/admintest.js"></script>
+
+        <script type="module">
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
+            import { getFirestore } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-firestore.js";
+
+            const firebaseConfig = {
+                apiKey: "AIzaSyDpJhUe5vwF7WRHCXzOlhqktZBazOwnU2E",
+                authDomain: "moto-bcb2b.firebaseapp.com",
+                projectId: "moto-bcb2b",
+                storageBucket: "moto-bcb2b.firebasestorage.app",
+                messagingSenderId: "57659561149",
+                appId: "1:57659561149:web:bf9761ac7ecd001495d3d4",
+                measurementId: "G-80J0MYRXBV"
+            };
+
+            // Initialize Firebase
+            const app = initializeApp(firebaseConfig);
+            const db = getFirestore(app);
+        </script>
+    </div>
+</body>
+</html>

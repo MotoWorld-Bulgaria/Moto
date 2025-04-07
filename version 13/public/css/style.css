@@ -1,0 +1,1965 @@
+/* ===================================================
+   Base Styles & Typography
+   - Global font settings
+   - Basic HTML element styles
+   - Smooth scrolling behavior
+=================================================== */
+body {
+    font-family: "Russo One", serif;
+    font-weight: 400;
+    font-style: normal;
+    min-width: 700px;
+    overflow-x: hidden;
+}
+html {
+  scroll-behavior: smooth;
+  scroll-padding: var(--scroll-padding, 5rem);
+}
+
+/* ===================================================
+   Navigation Bar
+   - Fixed navbar with blur effect
+   - Logo and navigation links
+   - Dropdown menu
+   - Mobile menu and burger icon
+=================================================== */
+.navbar {
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000; /* Lower than modal but higher than motors */
+}
+
+.navbar-brand, .nav-link, .dropdown-item {
+    color: #fff !important;
+    font-size: 1.7em;
+    text-align: right;
+}
+
+.nav-link:hover, .dropdown-item:hover, .nav-link:active, .dropdown-item:active {
+    color: #fff !important;
+}
+
+.navbar-nav {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.navbar-nav .nav-item {
+    margin: 0 5px;
+}
+
+.navbar-nav .nav-item.center-links {
+    flex-grow: 1;
+    text-align: center;
+}
+
+.navbar-nav .nav-item.dropdown {
+    margin-left: 80px;
+}
+
+@media (max-width: 767px) {
+    .navbar-collapse {
+        position: fixed;
+        top: 56px;
+        right: -250px;
+        width: 250px;
+        height: calc(100vh - 56px);
+        background: rgba(0, 0, 0, 0.7); /* Match navbar background */
+        backdrop-filter: blur(10px); /* Match navbar blur */
+        transition: right 0.3s ease;
+        padding: 1rem;
+        margin: 0;
+        z-index: 1000;
+        display: block !important;
+        opacity: 1 !important;
+    }
+
+    .navbar-collapse.show {
+        right: 0;
+    }
+
+    .navbar-nav {
+        flex-direction: column;
+        align-items: flex-end;
+        padding-top: 1rem;
+    }
+
+    .navbar-nav .nav-item {
+        width: 100%;
+        text-align: right;
+        margin: 0.5rem 0;
+        padding-right: 0;
+    }
+
+    .dropdown-menu {
+        position: static !important; /* Keep static for mobile */
+        top: auto !important;
+        right: auto !important;
+        width: 100% !important;
+        margin-top: 5px;
+    }
+
+    .dropdown-item {
+        text-align: center;
+        padding: 10px;
+    }
+}
+
+/* Update Dropdown Menu Styles */
+.dropdown-menu {
+    background: rgba(0, 0, 0, 0.7); /* Match navbar background */
+    backdrop-filter: blur(10px); /* Match navbar blur */
+    border: none;
+    border-radius: 8px;
+    padding: 0.5rem;
+    min-width: 180px;
+    margin-top: 0 !important; /* Remove margin */
+    position: fixed !important; /* Change to fixed */
+    top: 101% !important; /* Position below navbar */
+    right: 4px !important; /* Position from right edge */
+    left: auto !important;
+    transform: none !important; /* Remove transform */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Match navbar shadow */
+}
+
+.dropdown-item {
+    color: #fff;
+    padding: 12px 20px;
+    font-size: 1.1em;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    margin: 2px 0;
+    text-align: center;
+}
+
+.dropdown-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    transform: translateX(3px);
+}
+
+.dropdown-item:active {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+}
+
+@media (min-width: 768px) {
+    .dropdown-menu {
+        right: 0;
+        left: auto;
+        text-align: left;
+        min-width: 200px;
+        margin-left: 0;
+        transform: translateX(-25%); /* Center the dropdown under the button */
+    }
+}
+
+.dropdown-item:active {
+    background-color: #fff !important;
+    color: #000 !important;
+}
+
+.navbar-toggler {
+    border: none;
+    color: #fff; /* Make the burger menu icon white */
+    padding: 0.5rem;
+    transition: transform 0.3s ease;
+}
+
+.navbar-toggler:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba%28255, 255, 255, 1%29' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+}
+
+.navbar-toggler[aria-expanded="true"] .navbar-toggler-icon {
+    background-image: none;
+    position: relative;
+}
+
+.navbar-toggler[aria-expanded="true"] .navbar-toggler-icon::before,
+.navbar-toggler[aria-expanded="true"] .navbar-toggler-icon::after {
+    content: '';
+    position: absolute;
+    width: 24px;
+    height: 2px;
+    background-color: #fff;
+    left: 0;
+    transition: transform 0.3s ease;
+}
+
+.navbar-toggler[aria-expanded="true"] .navbar-toggler-icon::before {
+    transform: rotate(45deg);
+    top: 50%;
+}
+
+.navbar-toggler[aria-expanded="true"] .navbar-toggler-icon::after {
+    transform: rotate(-45deg);
+    top: 50%;
+}
+
+.navbar-nav.ms-auto {
+    margin-left: auto;
+}
+
+/* Make Акаунт button same size and remove arrow */
+.dropdown-toggle {
+    font-size: 1.7em !important; /* Match other nav items */
+    padding: 8px 15px !important; /* Adjust padding */
+}
+
+.dropdown-toggle::after {
+    display: none; /* Hide the dropdown arrow */
+}
+
+/* ===================================================
+   Hero Section (Page1)
+   - Full-screen background image
+   - Centered content
+   - Text and buttons
+=================================================== */
+.page1 {
+    background: url(https://images.pexels.com/photos/1416169/pexels-photo-1416169.jpeg) no-repeat;
+    background-size: cover;
+    height: 100vh;
+    width: 100vw;
+}
+
+.bg-body-tertiary {
+    background-color: rgba(0, 0, 0, 0.31) !important;
+}
+
+.divibertop {
+    padding-bottom: 150px;
+}
+
+.center {
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.31);
+    padding: 5% 0 100px;
+    max-width: 1200px;
+    margin: 0 auto;
+    border-radius: 30px;
+    height: 70vh;
+    width: 80vw;
+}
+
+/* Text Styles */
+h1, h2, p {
+    color: #fff;
+}
+
+h1 {
+    margin: 50px 0 70px;
+    font-size: 4.5em; /* Increase font size */
+}
+
+p {
+    font-size: 1.8em; /* Increase font size */
+}
+
+h2 {
+    font-size: 2.5em; /* Increase font size */
+}
+
+/* Button Styles */
+.btn-dark {
+    --bs-btn-bg: #fff;
+    --bs-btn-color: #000;
+}
+
+.btn {
+    font-size: 1.5em; /* Increase font size */
+}
+
+.btnor {
+    font-size: 1.5em; /* Increase font size */
+    padding: 10px 20px;
+    border: 2px solid #000;
+    border-radius: 30px;
+    background: #fff;
+    color: #000;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background 0.3s ease-in-out, transform 0.3s ease-in-out;
+    margin-bottom: 10px; /* Add space between buttons */
+}
+
+.btnor:hover {
+    background: #000;
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+.btnor i {
+    margin-right: 10px;
+}
+
+/* Divider Styles */
+.divider {
+    background-color: rgba(0, 0, 0, 0.14);
+    height: 20px;
+    margin-bottom: 20px;
+}
+
+/* Additional Text Styles */
+.heading {
+    color: rgba(33, 37, 41, 0.92);
+    font-size: 2.5em; /* Increase font size */
+    text-align: center;
+}
+
+.info {
+    color: rgba(33, 37, 41, 0.75);
+    margin-top: 50px;
+    font-size: 1.8em; /* Increase font size */
+    text-align: center;
+}
+
+/* Image Content Styles */
+.deviding {
+    padding: 70px 0 0 70px;
+}
+
+.content-image-right,
+.content-image-left {
+    max-width: 600px;
+    height: 50vh;
+    width: 100%;
+}
+
+.content-image-right {
+    padding-right: 11%;
+}
+
+.content-image-left {
+    padding-left: 11%;
+}
+
+
+
+/* Filters and Sorting Styles 
+
+
+
+*/
+.filters-section {
+    padding: 2rem 0;
+    background: rgba(0, 0, 0, 0.02);
+    margin-top: 60px;
+    min-height: 800px; /* Increase minimum height */
+    padding-left: 0; /* Remove left padding */
+}
+.clearbut{
+    margin-left: -4% !important;
+}
+.applybut{
+    margin-left: -5% !important;
+}
+.filter-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 2.5rem; /* Increased padding */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+    max-width: 90%; /* Make filter card slightly narrower */
+    font-size: 0.9em; /* Reduce base font size for entire filter card */
+}
+
+.filter-card h3 {
+    color: #333;
+    font-size: 1.3em; /* Reduced from 1.5em */
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.filter-group {
+    margin-bottom: 2.5rem; /* Increased spacing between groups */
+}
+
+.filter-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #555;
+    font-size: 0.95em; /* Reduced from 1.1em */
+}
+
+.form-select, .form-control {
+    padding: 1rem; /* Reduced from 1.2rem */
+    font-size: 0.95em; /* Reduced from 1.2em */
+}
+
+.price-range {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+    
+.price-range input {
+    width: 45%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1em;
+}
+
+.price-range span {
+    color: #555;
+}
+
+.sorting-section {
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.sorting-section .form-select {
+    width: auto;
+    min-width: 200px;
+}
+
+/* Filter Buttons */
+.filter-card .btnor {
+    width: 100%;
+    margin-bottom: 0.5rem;
+    font-size: 1.1em;
+}
+
+.filter-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    margin-left: 0.5rem; /* Add left margin */
+    margin-right: 0.5rem; /* Add right margin */
+}
+
+.filter-actions .btnor,
+#resetFilters {
+    flex: 1;
+    padding: 0.75rem 1.5rem;
+    font-size: clamp(1rem, 3vw, 1.5rem);
+    border: 2px solid #000;
+    border-radius: 30px;
+    background: #fff;
+    color: #000;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background 0.3s ease-in-out, transform 0.3s ease-in-out;
+    width: 100%;
+    max-width: 300px;
+    margin: 0.5rem auto;
+}
+
+.filter-actions .btnor:hover,
+#resetFilters:hover {
+    background: #000;
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+.filter-actions .btnor,
+.filter-actions #resetFilters,
+.filter-actions .btnor-outline {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    font-size: 0.95em; /* Reduced from 1.1em */
+}
+
+/* Update reset button to match apply button */
+#resetFilters {
+    background: #fff;
+    color: #000;
+    border: 2px solid #000;
+    border-radius: 30px;
+    transition: all 0.3s ease;
+}
+
+#resetFilters:hover {
+    background: #000;
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 991px) {
+    .sorting-section {
+        margin-top: 1rem;
+        justify-content: center;
+    }
+    
+    .sorting-section .form-select {
+        width: 100%;
+    }
+}
+
+@media (max-width: 767px) {
+    .filter-card {
+        margin-bottom: 2rem;
+    }
+}
+
+/* Updated Filter Styles */
+.filter-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+}
+
+.filter-header {
+    margin-bottom: 1.5rem;
+    text-align: center;
+    position: relative;
+}
+
+.filter-header h3 {
+    color: #333;
+    font-size: 1.5em;
+    margin: 0;
+    padding-bottom: 0.5rem;
+}
+
+.filter-header:after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50px;
+    height: 2px;
+    background: #333;
+}
+
+.filter-group {
+    margin-bottom: 1.5rem;
+}
+
+.filter-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #555;
+    font-size: 1em;
+    font-weight: 500;
+}
+
+.divider {
+    height: 1px;
+    background: rgba(0, 0, 0, 0.1);
+    margin: 1.5rem 0;
+}
+
+.filter-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.btnor-outline {
+    background: transparent;
+    border: 1px solid #000;
+    color: #000;
+    transition: all 0.3s ease;
+}
+
+.btnor-outline:hover {
+    background: #000;
+    color: #fff;
+}
+
+.filter-actions .btnor,
+.filter-actions .btnor-outline {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    font-size: 1em;
+}
+
+@media (max-width: 991px) {
+    .filter-card {
+        position: relative;
+        top: 0;
+        margin-bottom: 2rem;
+    }
+}
+
+/* ===================================================
+   Motorcycle Cards (Moto10)
+   - Card layout and hover effects
+   - Images and text content
+   - Responsive adjustments
+=================================================== */
+.moto10 {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background: #fff;
+    border-radius: 15px;
+    margin: 20px 0;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease-in-out;
+    position: relative; /* Add position relative */
+    z-index: 1; /* Ensure this is much lower than navbar */
+    transform-style: preserve-3d; /* Add this */
+    perspective: 1000px; /* Add this */
+    transform: translateZ(0); /* Add this to create a new stacking context */
+    will-change: transform; /* Optimize performance */
+}
+
+.moto10:hover {
+    transform: scale(1.05) translateZ(0); /* Add translateZ to maintain 3D context */
+    z-index: 2; /* Even when hovering, keep it below navbar */
+}
+
+.moto10 img {
+    width: 100%; /* Ensure full width */
+    height: auto;
+    border-radius: 15px; /* Add border radius to all sides */
+    transition: transform 0.3s ease-in-out;
+}
+
+@media (min-width: 768px) {
+    .moto10 img:hover {
+        transform: scale(1.1); /* Enlarge on hover */
+    }
+}
+
+.moto10 .info { 
+    flex: 1;
+    padding: 20px;
+    color: #000;
+    text-align: left;
+    font-size: 1.2em; /* Increase font size */
+}
+
+.moto10 .heading {
+    font-size: 2.2em; /* Increase font size */
+    color: #000;
+    text-align: center;
+}
+
+.moto10 .btn {
+    background: #fff;
+    color: #000;
+    border: 2px solid #000;
+    border-radius: 5px;
+    padding: 10px 20px;
+    transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
+    font-size: 1.2em; /* Increase font size */
+}
+
+.moto10 .btn:hover {
+    background: #000;
+    color: #fff;
+}
+
+@media (min-width: 768px) {
+    .moto10 img {
+        width: 80%;
+        max-width: 800px;
+        border-radius: 15px; /* Ensure border radius on all sides */
+    }
+}
+
+@media (max-width: 767px) {
+    .moto10 {
+        flex-direction: column;
+        text-align: center;
+        padding: 20px; /* Add padding for better spacing */
+        background: #f8f9fa; /* Light background for a clean look */
+        border: 1px solid #e0e0e0; /* Light border for a premium feel */
+    }
+
+    .moto10 img {
+        margin-bottom: 20px;
+        max-width: 80%; /* Ensure images are smaller */
+        display: block;
+        margin-left: auto;
+        margin-right: auto; /* Center images */
+        border-radius: 15px; /* Add border radius to all sides */
+        border: 1px solid #e0e0e0; /* Light border for a premium feel */
+    }
+
+    .moto10 .info {
+        text-align: center;
+        padding: 10px; /* Add padding for better spacing */
+        color: #333; /* Darker text color for better readability */
+        font-size: 1.2em; /* Increase font size */
+    }
+
+    .moto10 .heading {
+        font-size: 1.8em; /* Increase font size */
+        color: #333; /* Darker text color for better readability */
+    }
+
+    .moto10 .btn {
+        padding: 8px 16px; /* Adjust button padding for smaller screens */
+        border: 1px solid #333; /* Light border for a premium feel */
+        font-size: 1.2em; /* Increase font size */
+    }
+}
+
+/* ===================================================
+   Modal Components
+   - Login/Register modals
+   - Backdrop blur effects
+   - Form inputs and buttons
+=================================================== */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2000; /* Higher than navbar */
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex; /* Changed to flex for centering */
+  justify-content: center;
+  align-items: center;
+}
+
+.whitecoloredbuttons{
+    color: rgb(0, 0, 0) !important;
+    background-color: white !important;
+
+}
+.whitecoloredbuttons:hover{
+    color: white !important;
+    background-color: rgb(0, 0, 0) !important;
+}
+
+.whitecolortext{
+    color: white !important;
+}
+.whitecolortext:hover{
+    color: #989898 !important;
+}
+
+.modal-content {
+  background: rgba(255, 255, 255, 0.1); /* Transparent background */
+  backdrop-filter: blur(10px); /* Blurred effect */
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  width: 90%;
+  max-width: 400px;
+  position: relative;
+  color: #fff; /* Ensure text is white */
+  font-size: 1em; /* Reduce font size */
+  z-index: 2001; /* Higher than modal backdrop */
+}
+
+.modal-content input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.8);
+    color: #000;
+    font-size: 1em;
+    box-shadow: none;
+    transition: all 0.3s ease;
+}
+
+.modal-content input:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.3);
+    outline: none;
+}
+
+.modal-content button {
+  width: 100%;
+  padding: 10px;
+  background: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em; /* Reduce font size */
+}
+
+.modal-content button:hover {
+  background: #0056b3;
+}
+
+.close {
+  position: absolute;
+  top: 10px; /* Adjust as needed for spacing */
+  left: 10px; /* Add some space from the edge */
+  font-size: 20px;
+  font-weight: bold;
+  color: #fff; /* Ensure close button is white */
+  cursor: pointer;
+}
+
+/* Blurred Background */
+body.blurred {
+  filter: blur(10px);
+  pointer-events: none; /* Disable interactions with the blurred background */
+}
+
+body.blurred .modal, body.blurred .modal-content {
+  pointer-events: auto; /* Enable interactions with the modals */
+}
+
+/* Overlay */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.42);
+    z-index: 1;
+    pointer-events: auto;
+}
+
+/* Popup */
+.popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 255, 255, 0.1); /* Transparent background */
+    backdrop-filter: blur(10px); /* Blurred effect */
+    border-radius: 20px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 2;
+    width: 350px;
+    padding: 20px;
+    text-align: center;
+    pointer-events: auto; /* Allow interactions with the popup */
+    font-size: 1.2em; /* Increase font size */
+}
+
+.popup h2 {
+    margin: 0 0 20px;
+    font-size: 24px;
+    color: #fff;
+}
+
+.popup input[type="text"],
+.popup input[type="password"] {
+    width: 90%;
+    margin-bottom: 15px;
+    padding: 10px;
+    border: none;
+    border-radius: 10px;
+    box-shadow: inset 0px 3px 6px rgba(0, 0, 0, 0.1);
+    font-size: 16px;
+    background: rgba(255, 255, 255, 0.5);
+    color: #000;
+    font-size: 1.2em; /* Increase font size */
+}
+
+.popup button {
+    background: linear-gradient(145deg, #4caf50, #3e8e41);
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    font-size: 1.2em; /* Increase font size */
+}
+
+.popup button:hover {
+    background: linear-gradient(145deg, #3e8e41, #4caf50);
+}
+
+#loginButton, #registerButton {
+    margin: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(145deg, #747474, #8b8b8b);
+    color: white;
+    cursor: pointer;
+    font-size: 18px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+    font-size: 1.2em; /* Increase font size */
+}
+
+#loginButton:hover, #registerButton:hover {
+    background: linear-gradient(145deg, #ffffff, #d8d8d8);
+    color: black;
+}
+
+/* ===================================================
+   About Us Section
+   - Section layout and background
+   - Content styling
+   - Responsive design
+=================================================== */
+.aboutus {
+    padding: 80px 20px;
+    text-align: center;
+    color: #333;
+    background: #0000009a;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 50px 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.aboutus::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('https://images.pexels.com/photos/17821604/pexels-photo-17821604.jpeg') no-repeat center center;
+    background-size: cover;
+    opacity: 0.1;
+    z-index: 1;
+}
+
+.aboutus-content {
+    position: relative;
+    z-index: 2;
+    max-width: 800px;
+    margin: 0 auto;
+    background: #fff;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.aboutus h1 {
+    font-size: 2.5em;
+    margin-bottom: 20px;
+    color: #000000;
+}
+
+.aboutus p {
+    font-size: 1.2em;
+    margin-bottom: 20px;
+    line-height: 1.6;
+    color: #555;
+}
+
+@media (max-width: 767px) {
+    .aboutus {
+        padding: 50px 20px;
+    }
+
+    .aboutus h1 {
+        font-size: 2em;
+    }
+
+    .aboutus p {
+        font-size: 1em;
+    }
+}
+
+/* ===================================================
+   Contact Us Section
+   - Layout and spacing
+   - Text styles
+   - Links and interactions
+=================================================== */
+.contactus {
+    padding: 60px 20px;
+    text-align: center;
+    background: #ffffff; /* White background */
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 40px 0;
+}
+
+.contactus h1 {
+    font-size: 2.2em;
+    margin-bottom: 15px;
+    color: #333;
+    font-weight: 600;
+}
+
+.contactus p {
+    font-size: 1.1em;
+    margin-bottom: 15px;
+    line-height: 1.5;
+    color: #666;
+}
+
+.contactus a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.contactus a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive Styles */
+@media (max-width: 767px) {
+    .contactus {
+        padding: 40px 15px;
+    }
+
+    .contactus h1 {
+        font-size: 1.8em;
+    }
+
+    .contactus p {
+        font-size: 1em;
+    }
+}
+
+/* ===================================================
+   Footer
+   - Footer layout
+   - Text styles
+=================================================== */
+.foooter {
+    font-size: 22px; /* Increase font size */
+    text-align: center;
+    color: black;
+}
+
+/* ===================================================
+   Responsive Design
+   - Mobile-first media queries
+   - Tablet adaptations
+   - Desktop optimizations
+=================================================== */
+@media (max-width: 767px) {
+    body {
+        min-width: auto;
+        overflow-x: hidden;
+    }
+
+    /* Mobile Navigation */
+    .navbar {
+        padding: 10px;
+    }
+
+    .navbar-brand {
+        font-size: 1.4em;
+    }
+
+    .navbar-nav .nav-link {
+        font-size: 1.2em;
+        padding: 10px 15px;
+        text-align: center;
+    }
+
+    /* Mobile Hero Section */
+    .page1 {
+        height: 100vh;
+        background-position: center;
+    }
+
+    .center {
+        width: 95%;
+        height: auto;
+        padding: 30px 15px;
+        margin-top: 60px;
+    }
+
+    .center h1 {
+        font-size: 2.5em;
+        margin: 20px 0 30px;
+    }
+
+    .center p {
+        font-size: 1.2em;
+    }
+
+    /* Mobile Motorcycle Cards */
+    .moto10 {
+        margin: 15px;
+        padding: 15px;
+        flex-direction: column;
+    }
+
+    .moto10 img {
+        width: 100%;
+        height: auto;
+        padding: 0;
+        margin-bottom: 15px;
+    }
+
+    .deviding {
+        padding: 15px;
+        text-align: center;
+    }
+
+    .moto10 .heading {
+        font-size: 1.8em;
+        margin-bottom: 15px;
+    }
+
+    .moto10 .info {
+        font-size: 1em;
+        padding: 0;
+        margin-top: 15px;
+    }
+
+    .moto10 .btn {
+        width: 100%;
+        margin-top: 15px;
+        font-size: 1.1em;
+    }
+
+    /* Mobile About Us Section */
+    .aboutus {
+        padding: 30px 15px;
+        margin: 30px 15px;
+    }
+
+    .aboutus-content {
+        padding: 20px;
+    }
+
+    .aboutus h1 {
+        font-size: 2em;
+    }
+
+    .aboutus p {
+        font-size: 1em;
+        line-height: 1.5;
+    }
+
+    /* Mobile Contact Section */
+    .contactus {
+        padding: 30px 15px;
+        margin: 30px 15px;
+    }
+
+    .contactus h1 {
+        font-size: 1.8em;
+    }
+
+    .contactus p {
+        font-size: 1em;
+    }
+
+    /* Mobile Modal Styles */
+    .modal-content {
+        width: 95%;
+        margin: 10px;
+        padding: 15px;
+    }
+
+    .modal-content input,
+    .modal-content button {
+        font-size: 1em;
+        padding: 12px;
+        margin: 8px 0;
+    }
+
+    .modal-content h2 {
+        font-size: 1.8em;
+    }
+
+    /* Mobile Footer */
+    .foooter {
+        font-size: 0.9em;
+        padding: 15px;
+        margin-top: 30px;
+    }
+}
+
+/* Small Mobile Devices */
+@media screen and (max-width: 320px) {
+    .navbar-brand {
+        font-size: 1.2em;
+    }
+
+    .center h1 {
+        font-size: 2em;
+    }
+
+    .moto10 .heading {
+        font-size: 1.5em;
+    }
+
+    .moto10 .info {
+        font-size: 0.9em;
+    }
+}
+
+/* Landscape Mode Fixes */
+@media screen and (max-height: 500px) and (orientation: landscape) {
+    .page1 {
+        height: auto;
+        min-height: 100vh;
+    }
+
+    .center {
+        margin-top: 80px;
+        padding: 20px;
+    }
+
+    .modal-content {
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+}
+
+/* Enhanced Mobile Navigation Styles */
+@media (max-width: 991px) {
+    .navbar-collapse {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 100%;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(10px);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 9999;
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+    }
+
+    .navbar-collapse.show {
+        right: 0;
+        opacity: 1;
+    }
+
+    .navbar-nav {
+        padding: 0;
+        margin: 0;
+        width: 100%;
+    }
+
+    .navbar-nav .nav-item {
+        margin: 15px 0;
+        text-align: center;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.3s ease;
+    }
+
+    .navbar-collapse.show .nav-item {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .navbar-nav .nav-item:nth-child(1) { transition-delay: 0.1s; }
+    .navbar-nav .nav-item:nth-child(2) { transition-delay: 0.2s; }
+    .navbar-nav .nav-item:nth-child(3) { transition-delay: 0.3s; }
+    .navbar-nav .nav-item:nth-child(4) { transition-delay: 0.4s; }
+    .navbar-nav .nav-item:nth-child(5) { transition-delay: 0.5s; }
+
+    .nav-link {
+        font-size: 2em !important;
+        color: #fff !important;
+        padding: 15px 20px;
+        display: inline-block;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .nav-link::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        width: 0;
+        height: 2px;
+        background: #fff;
+        transition: all 0.3s ease;
+        transform: translateX(-50%);
+    }
+
+    .nav-link:hover::after {
+        width: 100%;
+    }
+
+    /* Modern Burger Icon */
+    .navbar-toggler {
+        width: 50px;
+        height: 50px;
+        position: relative;
+        padding: 0;
+        border: none;
+        background: transparent;
+        z-index: 10000;
+    }
+
+    .burger-icon,
+    .burger-icon::before,
+    .burger-icon::after {
+        content: '';
+        position: absolute;
+        height: 2px;
+        background: #fff;
+        transition: all 0.4s ease;
+    }
+
+    .burger-icon {
+        width: 30px;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .burger-icon::before {
+        width: 20px;
+        top: -8px;
+        right: 0;
+    }
+
+    .burger-icon::after {
+        width: 25px;
+        bottom: -8px;
+        right: 0;
+    }
+
+    .navbar-toggler[aria-expanded="true"] .burger-icon {
+        transform: translate(-50%, -50%) rotate(45deg);
+    }
+
+    .navbar-toggler[aria-expanded="true"] .burger-icon::before {
+        width: 30px;
+        top: 0;
+        transform: rotate(90deg);
+    }
+
+    .navbar-toggler[aria-expanded="true"] .burger-icon::after {
+        width: 30px;
+        bottom: 0;
+        transform: rotate(90deg);
+    }
+
+    /* Dropdown Menu */
+    .dropdown-menu {
+        background: transparent;
+        border: none;
+        text-align: center;
+        margin: 0;
+        padding: 0;
+    }
+
+    .dropdown-item {
+        font-size: 1.5em !important;
+        color: #fff !important;
+        padding: 10px 20px;
+        transition: all 0.3s ease;
+    }
+
+    .dropdown-item:hover {
+        background: rgba(255, 255, 255, 0.1);
+        transform: scale(1.1);
+    }
+
+    .filter-card {
+        max-width: 100%; /* Make filter card full width on mobile */
+        margin-left: auto;
+        margin-right: auto;
+        padding: 2rem 1rem; /* Adjust padding */
+    }
+
+    .motors-scroll-container {
+        padding-left: 0; /* Remove left padding */
+        padding-right: 0; /* Remove right padding */
+    }
+
+    .col-md-9 {
+        padding: 0 15px; /* Add consistent padding */
+    }
+
+    .col-md-3 {
+        padding: 0 15px; /* Add consistent padding */
+    }
+
+    .container {
+        padding: 0 15px; /* Ensure container has consistent padding */
+    }
+
+    .moto10 {
+        margin: 15px 0; /* Adjust margins for cards */
+    }
+}
+
+/* Fix for body scroll */
+body.menu-open {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+}
+
+/* ===================================================
+   Utility Classes
+   - Helper classes
+   - Common modifiers
+=================================================== */
+.russo-one-regular {
+  font-family: "Russo One", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* Password Validation Styles */
+.password-error {
+    color: #ff3333;
+    background-color: rgba(255, 51, 51, 0.1);
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    font-size: 0.9em;
+    text-align: center;
+    animation: shake 0.5s ease-in-out;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 51, 51, 0.3);
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-5px); }
+    40%, 80% { transform: translateX(5px); }
+}
+
+/* Remove all other validation-related styles */
+.password-mismatch,
+.validation-error-input,
+.modal-content input:invalid {
+    border-color: #ccc !important;
+    box-shadow: none !important;
+    animation: none !important;
+}
+
+/* Reset password fields on focus */
+.password-mismatch:focus {
+    border-color: #007bff !important;
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.3) !important;
+    animation: none;
+}
+
+/* Add these new validation styles */
+.validation-error {
+    color: #ff3333;
+    background-color: rgba(255, 51, 51, 0.1);
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    font-size: 0.9em;
+    text-align: center;
+    animation: shake 0.5s ease-in-out;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 51, 51, 0.3);
+}
+
+/* Reset validation error on focus */
+.validation-error-input:focus {
+    border-color: #007bff !important;
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.3) !important;
+    animation: none;
+}
+
+/* Mobile-First Media Queries */
+@media screen and (max-width: 768px) {
+    body {
+        min-width: auto;
+        overflow-x: hidden;
+    }
+
+    /* Mobile Navigation */
+    .navbar {
+        padding: 10px;
+    }
+
+    .navbar-brand {
+        font-size: 1.4em;
+    }
+
+    .navbar-nav .nav-link {
+        font-size: 1.2em;
+        padding: 10px 15px;
+        text-align: center;
+    }
+
+    /* Mobile Hero Section */
+    .page1 {
+        height: 100vh;
+        background-position: center;
+    }
+
+    .center {
+        width: 95%;
+        height: auto;
+        padding: 30px 15px;
+        margin-top: 60px;
+    }
+
+    .center h1 {
+        font-size: 2.5em;
+        margin: 20px 0 30px;
+    }
+
+    .center p {
+        font-size: 1.2em;
+    }
+
+    /* Mobile Motorcycle Cards */
+    .moto10 {
+        margin: 15px;
+        padding: 15px;
+        flex-direction: column;
+    }
+
+    .moto10 img {
+        width: 100%;
+        height: auto;
+        padding: 0;
+        margin-bottom: 15px;
+    }
+
+    .deviding {
+        padding: 15px;
+        text-align: center;
+    }
+
+    .moto10 .heading {
+        font-size: 1.8em;
+        margin-bottom: 15px;
+    }
+
+    .moto10 .info {
+        font-size: 1em;
+        padding: 0;
+        margin-top: 15px;
+    }
+
+    .moto10 .btn {
+        width: 100%;
+        margin-top: 15px;
+        font-size: 1.1em;
+    }
+
+    /* Mobile About Us Section */
+    .aboutus {
+        padding: 30px 15px;
+        margin: 30px 15px;
+    }
+
+    .aboutus-content {
+        padding: 20px;
+    }
+
+    .aboutus h1 {
+        font-size: 2em;
+    }
+
+    .aboutus p {
+        font-size: 1em;
+        line-height: 1.5;
+    }
+
+    /* Mobile Contact Section */
+    .contactus {
+        padding: 30px 15px;
+        margin: 30px 15px;
+    }
+
+    .contactus h1 {
+        font-size: 1.8em;
+    }
+
+    .contactus p {
+        font-size: 1em;
+    }
+
+    /* Mobile Modal Styles */
+    .modal-content {
+        width: 95%;
+        margin: 10px;
+        padding: 15px;
+    }
+
+    .modal-content input,
+    .modal-content button {
+        font-size: 1em;
+        padding: 12px;
+        margin: 8px 0;
+    }
+
+    .modal-content h2 {
+        font-size: 1.8em;
+    }
+
+    /* Mobile Footer */
+    .foooter {
+        font-size: 0.9em;
+        padding: 15px;
+        margin-top: 30px;
+    }
+}
+
+/* Small Mobile Devices */
+@media screen and (max-width: 320px) {
+    .navbar-brand {
+        font-size: 1.2em;
+    }
+
+    .center h1 {
+        font-size: 2em;
+    }
+
+    .moto10 .heading {
+        font-size: 1.5em;
+    }
+
+    .moto10 .info {
+        font-size: 0.9em;
+    }
+}
+
+/* Landscape Mode Fixes */
+@media screen and (max-height: 500px) and (orientation: landscape) {
+    .page1 {
+        height: auto;
+        min-height: 100vh;
+    }
+
+    .center {
+        margin-top: 80px;
+        padding: 20px;
+    }
+
+    .modal-content {
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+}
+
+/* Enhanced Mobile Navigation Styles */
+@media (max-width: 991px) {
+    .navbar-collapse {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 100%;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(10px);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 9999;
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+    }
+
+    .navbar-collapse.show {
+        right: 0;
+        opacity: 1;
+    }
+
+    .navbar-nav {
+        padding: 0;
+        margin: 0;
+        width: 100%;
+    }
+
+    .navbar-nav .nav-item {
+        margin: 15px 0;
+        text-align: center;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.3s ease;
+    }
+
+    .navbar-collapse.show .nav-item {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .navbar-nav .nav-item:nth-child(1) { transition-delay: 0.1s; }
+    .navbar-nav .nav-item:nth-child(2) { transition-delay: 0.2s; }
+    .navbar-nav .nav-item:nth-child(3) { transition-delay: 0.3s; }
+    .navbar-nav .nav-item:nth-child(4) { transition-delay: 0.4s; }
+    .navbar-nav .nav-item:nth-child(5) { transition-delay: 0.5s; }
+
+    .nav-link {
+        font-size: 2em !important;
+        color: #fff !important;
+        padding: 15px 20px;
+        display: inline-block;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .nav-link::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        width: 0;
+        height: 2px;
+        background: #fff;
+        transition: all 0.3s ease;
+        transform: translateX(-50%);
+    }
+
+    .nav-link:hover::after {
+        width: 100%;
+    }
+
+    /* Modern Burger Icon */
+    .navbar-toggler {
+        width: 50px;
+        height: 50px;
+        position: relative;
+        padding: 0;
+        border: none;
+        background: transparent;
+        z-index: 10000;
+    }
+
+    .burger-icon,
+    .burger-icon::before,
+    .burger-icon::after {
+        content: '';
+        position: absolute;
+        height: 2px;
+        background: #fff;
+        transition: all 0.4s ease;
+    }
+
+    .burger-icon {
+        width: 30px;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .burger-icon::before {
+        width: 20px;
+        top: -8px;
+        right: 0;
+    }
+
+    .burger-icon::after {
+        width: 25px;
+        bottom: -8px;
+        right: 0;
+    }
+
+    .navbar-toggler[aria-expanded="true"] .burger-icon {
+        transform: translate(-50%, -50%) rotate(45deg);
+    }
+
+    .navbar-toggler[aria-expanded="true"] .burger-icon::before {
+        width: 30px;
+        top: 0;
+        transform: rotate(90deg);
+    }
+
+    .navbar-toggler[aria-expanded="true"] .burger-icon::after {
+        width: 30px;
+        bottom: 0;
+        transform: rotate(90deg);
+    }
+
+    /* Dropdown Menu */
+    .dropdown-menu {
+        background: transparent;
+        border: none;
+        text-align: center;
+        margin: 0;
+        padding: 0;
+    }
+
+    .dropdown-item {
+        font-size: 1.5em !important;
+        color: #fff !important;
+        padding: 10px 20px;
+        transition: all 0.3s ease;
+    }
+
+    .dropdown-item:hover {
+        background: rgba(255, 255, 255, 0.1);
+        transform: scale(1.1);
+    }
+
+    .filter-card {
+        max-width: 100%; /* Make filter card full width on mobile */
+        margin-left: auto;
+        margin-right: auto;
+        padding: 2rem 1rem; /* Adjust padding */
+    }
+
+    .motors-scroll-container {
+        padding-left: 0; /* Remove left padding */
+        padding-right: 0; /* Remove right padding */
+    }
+
+    .col-md-9 {
+        padding: 0 15px; /* Add consistent padding */
+    }
+
+    .col-md-3 {
+        padding: 0 15px; /* Add consistent padding */
+    }
+
+    .container {
+        padding: 0 15px; /* Ensure container has consistent padding */
+    }
+
+    .moto10 {
+        margin: 15px 0; /* Adjust margins for cards */
+    }
+}
+
+/* Fix for body scroll */
+body.menu-open {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+}
+
+/* Enhanced Motorcycle Specifications */
+.specs-list {
+    list-style: none;
+    padding: 0;
+    margin: 1.5rem 0;
+}
+
+.specs-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.8rem;
+    padding: 0.5rem;
+    background: rgba(0, 0, 0, 0.03);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.specs-item:hover {
+    background: rgba(0, 0, 0, 0.06);
+    transform: translateX(5px);
+}
+
+.specs-label {
+    font-weight: 600;
+    color: #666;
+    min-width: 160px;
+    padding-right: 1rem;
+}
+
+.specs-value {
+    color: #333;
+    font-weight: 500;
+}
+
+.price-value {
+    font-size: 1em;
+    color: #333;
+    font-weight: 500;
+}
+
+/* Adjust mobile view */
+@media (max-width: 767px) {
+    .specs-item {
+        flex-direction: column;
+        align-items: flex-start;
+        text-align: left;
+        padding: 0.8rem;
+    }
+    
+    .specs-label {
+        margin-bottom: 0.3rem;
+    }
+}
+
+/* Motors Scroll Container */
+.motors-scroll-container {
+    height: 800px;
+    overflow-y: auto;
+    overflow-x: hidden; /* Prevent horizontal scroll */
+    padding-right: 15px;
+    margin-top: 20px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
+    padding-left: 2rem;
+    width: 100%;
+}
+
+.motors-scroll-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.motors-scroll-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.motors-scroll-container::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 3px;
+}
+
+.motors-scroll-container::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* Updated Mobile Styles for Motors Section */
+@media (max-width: 991px) {
+    .filters-section {
+        padding: 2rem 15px;
+    }
+
+    .filter-card {
+        max-width: 100%;
+        margin: 0 auto 2rem auto;
+        padding: 1.5rem;
+    }
+
+    .motors-scroll-container {
+        padding: 0;
+        margin: 20px auto;
+        width: 100%;
+    }
+
+    .col-md-9, 
+    .col-md-3 {
+        padding: 0 15px;
+    }
+
+    .moto10 {
+        margin: 15px auto;
+        width: 95%;
+    }
+
+    .deviding {
+        padding: 15px;
+    }
+
+    /* Center motorcycle cards */
+    #motorsContainer {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+}
+
+/* Update base styles for motorcycle container */
+.motors-scroll-container {
+    height: 800px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    margin-top: 20px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
+    width: 100%;
+}
