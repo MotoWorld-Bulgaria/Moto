@@ -68,119 +68,77 @@ app.post("/create-checkout-session", async (req, res) => {
   try {
     const { name, price, userData, motorData } = req.body;
 
-    // Log incoming request data for debugging
-    console.log("Incoming request data:", { name, price, userData, motorData });
-
-    // Validate request data
     if (!name || !price || !userData?.uid || !motorData?.name) {
-      console.error("Validation error: Missing required fields", { name, price, userData, motorData });
-      return res.status(400).json({
-        error: "Missing required fields",
-        message: "Липсват задължителни данни"
-      });
+      return res.status(400).json({ error: "Missing required fields" });
     }
 
-    // Parse and validate price
     const numericPrice = parseFloat(price);
     if (isNaN(numericPrice) || numericPrice <= 0) {
-      console.error("Validation error: Invalid price", { price });
-      return res.status(400).json({
-        error: "Invalid price",
-        message: "Невалидна цена"
-      });
+      return res.status(400).json({ error: "Invalid price" });
     }
 
     const orderNumber = generateOrderNumber();
-
-    const orderData = {
+    const orderRef = await db.collection('orders').add({
       orderNumber,
-      productDetails: {
-        ...motorData,
-        price: numericPrice
-      },
+      productDetails: { ...motorData, price: numericPrice },
       customer: userData,
       status: 'pending',
       orderDate: admin.firestore.FieldValue.serverTimestamp(),
-      createdAt: admin.firestore.FieldValue.serverTimestamp()
-    };
+    });
 
-    const orderRef = await db.collection('orders').add(orderData);
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      mode: "payment",
+      success_url: `${process.env.FRONTEND_URL}/success.html`,
+      cancel_url: `${process.env.FRONTEND_URL}/cancel`,
+      line_items: [{
+        price_data: {
+          currency: "bgn",
+          product_data: { name: motorData.name, description: motorData.manufacturer },
+          unit_amount: Math.round(numericPrice * 100),
+        },
+        quantity: 1,
+      }],
+      metadata: { orderId: orderRef.id, orderNumber },
+    });
 
-    try {
-      const session = await stripe.checkout.sessions.create({
-        payment_method_types: ["card"],
-        mode: "payment",
-        success_url: `${process.env.FRONTEND_URL || req.headers.origin || 'http://localhost:3000'}/success.html`,
-        cancel_url: `${process.env.FRONTEND_URL || req.headers.origin || 'http://localhost:3000'}/cancel`,
-        line_items: [
-          {
-            price_data: {
-              currency: "bgn",
-              product_data: { 
-                name: motorData.name,
-                description: `Manufacturer: ${motorData.manufacturer}`,
-              },
-              unit_amount: Math.round(numericPrice * 100),
-            },
-            quantity: 1,
-          },
-        ],
-        metadata: {
-          orderId: orderRef.id,
-          orderNumber
-        }
-      });
-
-      await orderRef.update({
-        checkoutSessionId: session.id
-      });
-
-      return res.status(200).json({ url: session.url });
-    } catch (stripeError) {
-      console.error("Stripe API error:", stripeError);
-      await orderRef.delete(); // Rollback order creation if Stripe fails
-      throw new Error("Failed to create Stripe checkout session");
-    }
-
+    await orderRef.update({ checkoutSessionId: session.id });
+    return res.status(200).json({ url: session.url });
   } catch (error) {
     console.error("Error in /create-checkout-session:", error);
-    return res.status(500).json({
-      error: "Server error",
-      message: error.message || "Internal server error"
-    });
+    return res.status(500).json({ error: "Server error", message: error.message });
   }
 });
 
-app.post("/webhook", express.raw({ type: 'application/json' }), async (req, res) => {
+app.post("/webhook", bodyParser.raw({ type: "application/json" }), async (req, res) => {
   let event;
   try {
-    event = JSON.parse(req.body.toString());
+    const sig = req.headers['stripe-signature'];
+    event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
   } catch (err) {
-    return res.status(400).send(`Webhook Error: ${err.message}`);
+    console.error("Webhook signature verification failed.", err.message);
+    return res.status(400).send("Webhook Error");
   }
 
   if (event.type === "checkout.session.completed") {
     const session = event.data.object;
-    
     try {
       const orderId = session.metadata?.orderId;
-      if (!orderId) return res.status(200).json({ received: true });
-
-      await db.collection("orders").doc(orderId).update({
-        status: 'completed',
-        payment_status: session.payment_status,
-        payment_completed_at: admin.firestore.FieldValue.serverTimestamp(),
-        amount_paid: session.amount_total / 100,
-      });
+      if (orderId) {
+        await db.collection("orders").doc(orderId).update({
+          status: "completed",
+          payment_status: session.payment_status,
+          payment_completed_at: admin.firestore.FieldValue.serverTimestamp(),
+          amount_paid: session.amount_total / 100,
+        });
+      }
     } catch (error) {
       console.error("Error updating order:", error);
     }
   }
-
-  res.status(200).json({ received: true });
+  res.json({ received: true });
 });
 
-// Redirect to login page on success
 app.get("/success.html", (req, res) => {
   res.redirect("/login.html");
 });
