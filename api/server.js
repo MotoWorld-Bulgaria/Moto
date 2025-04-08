@@ -62,6 +62,9 @@ app.post("/create-checkout-session", async (req, res) => {
   try {
     const { name, price, userData, motorData } = req.body;
 
+    // Log incoming request data for debugging
+    console.log("Incoming request data:", { name, price, userData, motorData });
+
     // Validate request data
     if (!name || !price || !userData?.uid || !motorData?.name) {
       console.error("Validation error: Missing required fields", { name, price, userData, motorData });
@@ -71,13 +74,23 @@ app.post("/create-checkout-session", async (req, res) => {
       });
     }
 
+    // Parse and validate price
+    const numericPrice = parseFloat(price);
+    if (isNaN(numericPrice) || numericPrice <= 0) {
+      console.error("Validation error: Invalid price", { price });
+      return res.status(400).json({
+        error: "Invalid price",
+        message: "Невалидна цена"
+      });
+    }
+
     const orderNumber = generateOrderNumber();
 
     const orderData = {
       orderNumber,
       productDetails: {
         ...motorData,
-        price: parseFloat(price)
+        price: numericPrice
       },
       customer: userData,
       status: 'pending',
@@ -101,7 +114,7 @@ app.post("/create-checkout-session", async (req, res) => {
                 name: motorData.name,
                 description: `Manufacturer: ${motorData.manufacturer}`,
               },
-              unit_amount: Math.round(parseFloat(price) * 100),
+              unit_amount: Math.round(numericPrice * 100),
             },
             quantity: 1,
           },

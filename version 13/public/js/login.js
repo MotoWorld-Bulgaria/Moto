@@ -268,7 +268,7 @@ window.handlePurchase = async function(name, price) {
 
     const requestData = {
       name: motorData.name,
-      price: numericPrice,
+      price: numericPrice, // Ensure price is sent as a number
       userData: {
         uid: user.uid,
         email: user.email,
@@ -281,6 +281,8 @@ window.handlePurchase = async function(name, price) {
         image: motorData.image
       }
     };
+
+    console.log("Sending request to /create-checkout-session:", requestData);
 
     const response = await fetch('/api/create-checkout-session', {
       method: 'POST',
@@ -298,6 +300,8 @@ window.handlePurchase = async function(name, price) {
       console.error('Response parsing error:', parseError);
       throw new Error('Невалиден отговор от сървъра');
     }
+
+    console.log("Response from /create-checkout-session:", responseData);
 
     if (!response.ok) {
       console.error('Server error response:', responseData);
