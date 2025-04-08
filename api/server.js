@@ -18,6 +18,7 @@ try {
   if (!process.env.FIREBASE_SERVICE_ACCOUNT) {
     throw new Error("Missing FIREBASE_SERVICE_ACCOUNT in environment variables.");
   }
+  console.log("Raw FIREBASE_SERVICE_ACCOUNT:", process.env.FIREBASE_SERVICE_ACCOUNT); // Debugging log
   serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
 } catch (error) {
   console.error("Error parsing FIREBASE_SERVICE_ACCOUNT:", error.message);
