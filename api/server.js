@@ -13,11 +13,16 @@ const __dirname = path.dirname(__filename);
 // Load environment variables
 dotenv.config();
 
-if (!process.env.FIREBASE_SERVICE_ACCOUNT) {
-  throw new Error("Missing FIREBASE_SERVICE_ACCOUNT in environment variables.");
+let serviceAccount;
+try {
+  if (!process.env.FIREBASE_SERVICE_ACCOUNT) {
+    throw new Error("Missing FIREBASE_SERVICE_ACCOUNT in environment variables.");
+  }
+  serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+} catch (error) {
+  console.error("Error parsing FIREBASE_SERVICE_ACCOUNT:", error.message);
+  process.exit(1); // Exit the process with an error code
 }
-
-const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
